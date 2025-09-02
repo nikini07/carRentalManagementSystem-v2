@@ -88,7 +88,7 @@ public:
         ostringstream oss;
         oss << fixed << setprecision(2);
         oss << carID << " " << brand << " " << model << " " << type << " "
-            << year << " " << capacity << " " << ratePerDay << " " << available;
+            << year << " " << capacity << " " << ratePerDay << " " << (available ? "true" : "false");
         return oss.str();
     }
 
@@ -413,7 +413,7 @@ public:
     bool deleteCustomer(string id) {
         for (size_t i = 0; i < customers.size(); i++) {
             if (customers[i].getID() == id) {
-                customers.erase(customers.begin() + i);
+                customers.erase(cars.begin() + i);
                 saveCustomers();
                 return true;
             }
@@ -574,13 +574,13 @@ int main() {
             from_json(j, car);
             if (!j["id"].get<string>().empty() && isalpha(j["id"].get<string>()[0])) {
                 rs.addCar(car);
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Invalid Car ID\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid Car ID"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -594,9 +594,9 @@ int main() {
             j["id"] = id;
             from_json(j, cust);
             rs.addCustomer(cust);
-            res.set_content(json({ "status": "success", "id": id }).dump(), "application/json");
+            res.set_content(nlohmann::json({ {"status", "success"}, {"id", id} }).dump(), "application/json");
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -623,20 +623,20 @@ int main() {
                 }
             }
             if (!validCar) {
-                res.set_content("{\"status\":\"error\",\"message\":\"Car not available or not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Car not available or not found"} }).dump(), "application/json");
                 res.status = 400;
             } else if (!validCustomer) {
-                res.set_content("{\"status\":\"error\",\"message\":\"Customer not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Customer not found"} }).dump(), "application/json");
                 res.status = 400;
             } else if (bk.getEndDate() < bk.getStartDate()) {
-                res.set_content("{\"status\":\"error\",\"message\":\"End date before start date\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "End date before start date"} }).dump(), "application/json");
                 res.status = 400;
             } else {
                 rs.addBooking(bk);
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -650,13 +650,13 @@ int main() {
             string value = j["value"].get<string>();
             bool success = rs.updateCar(id, field, value);
             if (success) {
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Invalid field or car not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or car not found"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -668,13 +668,13 @@ int main() {
             string id = j["id"].get<string>();
             bool success = rs.deleteCar(id);
             if (success) {
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Car not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Car not found"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -688,13 +688,13 @@ int main() {
             string value = j["value"].get<string>();
             bool success = rs.updateCustomer(id, field, value);
             if (success) {
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Invalid field or customer not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or customer not found"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -706,13 +706,13 @@ int main() {
             string id = j["id"].get<string>();
             bool success = rs.deleteCustomer(id);
             if (success) {
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Customer not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Customer not found"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -727,23 +727,23 @@ int main() {
                 Date dateValue = j["dateValue"].get<Date>();
                 bool success = rs.updateBooking(id, field, "", dateValue);
                 if (success) {
-                    res.set_content("{\"status\":\"success\"}", "application/json");
+                    res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
                 } else {
-                    res.set_content("{\"status\":\"error\",\"message\":\"Invalid field or booking not found\"}", "application/json");
+                    res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or booking not found"} }).dump(), "application/json");
                     res.status = 400;
                 }
             } else {
                 string value = j["value"].get<string>();
                 bool success = rs.updateBooking(id, field, value);
                 if (success) {
-                    res.set_content("{\"status\":\"success\"}", "application/json");
+                    res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
                 } else {
-                    res.set_content("{\"status\":\"error\",\"message\":\"Invalid field or booking not found\"}", "application/json");
+                    res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or booking not found"} }).dump(), "application/json");
                     res.status = 400;
                 }
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
@@ -755,13 +755,13 @@ int main() {
             string id = j["id"].get<string>();
             bool success = rs.deleteBooking(id);
             if (success) {
-                res.set_content("{\"status\":\"success\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
-                res.set_content("{\"status\":\"error\",\"message\":\"Booking not found\"}", "application/json");
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Booking not found"} }).dump(), "application/json");
                 res.status = 400;
             }
         } catch (const exception& e) {
-            res.set_content("{\"status\":\"error\",\"message\":\"" + string(e.what()) + "\"}", "application/json");
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
