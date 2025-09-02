@@ -413,7 +413,7 @@ public:
     bool deleteCustomer(string id) {
         for (size_t i = 0; i < customers.size(); i++) {
             if (customers[i].getID() == id) {
-                customers.erase(cars.begin() + i);
+                customers.erase(customers.begin() + i);
                 saveCustomers();
                 return true;
             }
