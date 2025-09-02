@@ -109,25 +109,33 @@ function App() {
     } else {
       alert('Incorrect password');
     }
-  };if (!role) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h1>Welcome to Car Rental System</h1>
-        <button onClick={() => handleRoleSelect('admin')} style={{ margin: '10px' }}>Admin</button>
-        <button onClick={() => handleRoleSelect('customer')} style={{ margin: '10px' }}>Customer</button>
-      </div>
-    );
-  }
-
-  if (!authenticated) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h1>Admin Login</h1>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ margin: '10px' }} />
-        <button onClick={handleLogin}>Login</button>
-      </div>
-    );
-  }
+  };
+  
+  if (!role) {
+  return (
+    <div className="text-center mt-12">
+      <h1 className="text-3xl font-bold text-gray-800">Welcome to Car Rental System</h1>
+      <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={() => handleRoleSelect('admin')}>Admin</button>
+      <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={() => handleRoleSelect('customer')}>Customer</button>
+    </div>
+  );
+}
+if (!authenticated) {
+  return (
+    <div className="text-center mt-12">
+      <h1 className="text-3xl font-bold text-gray-800">Admin Login</h1>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="border border-gray-300 p-2 m-2 rounded w-64"
+      />
+      <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={handleLogin}>
+        Login
+      </button>
+    </div>
+  );
+}
 
   const props = { cars, setCars, customers, setCustomers, bookings, setBookings, saveData, generateCustomerID, generateBookingID, dateLessThan };
 
