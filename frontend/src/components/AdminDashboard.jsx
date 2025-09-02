@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setBookings, saveCar, saveCustomer, saveBooking, generateCustomerID, generateBookingID, dateLessThan }) => {
   const [view, setView] = useState('menu');
@@ -6,7 +7,12 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     id: '', brand: '', model: '', type: '', year: '', capacity: '', rate: '',
     name: '', license: '', contact: '',
     carID: '', customerID: '', startDay: '', startMonth: '', startYear: '', endDay: '', endMonth: '', endYear: '',
-    updateCarID: '', updateField: '', updateValue: ''
+    updateCarID: '', updateCarField: '', updateCarValue: '',
+    updateCustomerID: '', updateCustomerField: '', updateCustomerValue: '',
+    updateBookingID: '', updateBookingField: '', updateBookingValue: '',
+    updateBookingStartDay: '', updateBookingStartMonth: '', updateBookingStartYear: '',
+    updateBookingEndDay: '', updateBookingEndMonth: '', updateBookingEndYear: '',
+    deleteCarID: '', deleteCustomerID: '', deleteBookingID: ''
   });
 
   const handleInputChange = (e) => {
@@ -18,11 +24,16 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
       id: '', brand: '', model: '', type: '', year: '', capacity: '', rate: '',
       name: '', license: '', contact: '',
       carID: '', customerID: '', startDay: '', startMonth: '', startYear: '', endDay: '', endMonth: '', endYear: '',
-      updateCarID: '', updateField: '', updateValue: ''
+      updateCarID: '', updateCarField: '', updateCarValue: '',
+      updateCustomerID: '', updateCustomerField: '', updateCustomerValue: '',
+      updateBookingID: '', updateBookingField: '', updateBookingValue: '',
+      updateBookingStartDay: '', updateBookingStartMonth: '', updateBookingStartYear: '',
+      updateBookingEndDay: '', updateBookingEndMonth: '', updateBookingEndYear: '',
+      deleteCarID: '', deleteCustomerID: '', deleteBookingID: ''
     });
   };
 
-  const addCar = () => {
+  const addCar = async () => {
     const { id, brand, model, type, year, capacity, rate } = formData;
     if (!id || !/^[A-Za-z]\d*$/.test(id)) {
       alert('Invalid Car ID. Must start with a letter followed by digits.');
@@ -47,7 +58,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
       alert('Invalid rate.');
       return;
     }
-    saveCar({ id, brand, model, type, year: y, capacity: cap, rate: r });
+    await saveCar({ id, brand, model, type, year: y, capacity: cap, rate: r });
     resetForm();
     setView('menu');
   };
@@ -63,7 +74,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     setView('menu');
   };
 
-  const addBooking = () => {
+  const addBooking = async () => {
     const { carID, customerID, startDay, startMonth, startYear, endDay, endMonth, endYear } = formData;
     const car = cars.find((c) => c.id === carID && c.available);
     if (!car) {
@@ -81,21 +92,147 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
       return;
     }
     const bookingID = generateBookingID();
-    saveBooking({ bookingID, carID, customerID, startDate, endDate });
+    await saveBooking({ bookingID, carID, customerID, startDate, endDate });
     resetForm();
     setView('menu');
   };
 
-  const updateCarField = () => {
-    alert('Update car not implemented yet.');
-    resetForm();
-    setView('menu');
+  const updateCar = async () => {
+    const { updateCarID, updateCarField, updateCarValue } = formData;
+    if (!updateCarID || !updateCarField || !updateCarValue) {
+      alert('All fields required.');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/updateCar', {
+        id: updateCarID,
+        field: updateCarField,
+        value: updateCarValue
+      });
+      alert('Car updated successfully.');
+      const res = await axios.get('http://localhost:8080/cars');
+      setCars(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to update car: ' + err.response.data.message);
+    }
   };
 
-  const deleteCar = () => {
-    alert('Delete car not implemented yet.');
-    resetForm();
-    setView('menu');
+  const deleteCar = async () => {
+    const { deleteCarID } = formData;
+    if (!deleteCarID) {
+      alert('Car ID required.');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/deleteCar', { id: deleteCarID });
+      alert('Car deleted successfully.');
+      const res = await axios.get('http://localhost:8080/cars');
+      setCars(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to delete car: ' + err.response.data.message);
+    }
+  };
+
+  const updateCustomer = async () => {
+    const { updateCustomerID, updateCustomerField, updateCustomerValue } = formData;
+    if (!updateCustomerID || !updateCustomerField || !updateCustomerValue) {
+      alert('All fields required.');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/updateCustomer', {
+        id: updateCustomerID,
+        field: updateCustomerField,
+        value: updateCustomerValue
+      });
+      alert('Customer updated successfully.');
+      const res = await axios.get('http://localhost:8080/customers');
+      setCustomers(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to update customer: ' + err.response.data.message);
+    }
+  };
+
+  const deleteCustomer = async () => {
+    const { deleteCustomerID } = formData;
+    if (!deleteCustomerID) {
+      alert('Customer ID required.');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/deleteCustomer', { id: deleteCustomerID });
+      alert('Customer deleted successfully.');
+      const res = await axios.get('http://localhost:8080/customers');
+      setCustomers(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to delete customer: ' + err.response.data.message);
+    }
+  };
+
+  const updateBooking = async () => {
+    const { updateBookingID, updateBookingField, updateBookingValue, updateBookingStartDay, updateBookingStartMonth, updateBookingStartYear, updateBookingEndDay, updateBookingEndMonth, updateBookingEndYear } = formData;
+    if (!updateBookingID || !updateBookingField) {
+      alert('Booking ID and field required.');
+      return;
+    }
+    if ((updateBookingField === 'startDate' || updateBookingField === 'endDate') && (!updateBookingStartDay || !updateBookingStartMonth || !updateBookingStartYear || !updateBookingEndDay || !updateBookingEndMonth || !updateBookingEndYear)) {
+      alert('Date fields required for date update.');
+      return;
+    }
+    if (updateBookingField !== 'startDate' && updateBookingField !== 'endDate' && !updateBookingValue) {
+      alert('Value required for non-date fields.');
+      return;
+    }
+    try {
+      const payload = {
+        id: updateBookingID,
+        field: updateBookingField,
+        value: updateBookingField === 'startDate' || updateBookingField === 'endDate' ? '' : updateBookingValue,
+        dateValue: updateBookingField === 'startDate' ? {
+          day: parseInt(updateBookingStartDay),
+          month: parseInt(updateBookingStartMonth),
+          year: parseInt(updateBookingStartYear)
+        } : updateBookingField === 'endDate' ? {
+          day: parseInt(updateBookingEndDay),
+          month: parseInt(updateBookingEndMonth),
+          year: parseInt(updateBookingEndYear)
+        } : {}
+      };
+      await axios.post('http://localhost:8080/updateBooking', payload);
+      alert('Booking updated successfully.');
+      const res = await axios.get('http://localhost:8080/bookings');
+      setBookings(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to update booking: ' + err.response.data.message);
+    }
+  };
+
+  const deleteBooking = async () => {
+    const { deleteBookingID } = formData;
+    if (!deleteBookingID) {
+      alert('Booking ID required.');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/deleteBooking', { id: deleteBookingID });
+      alert('Booking deleted successfully.');
+      const res = await axios.get('http://localhost:8080/bookings');
+      setBookings(res.data);
+      resetForm();
+      setView('menu');
+    } catch (err) {
+      alert('Failed to delete booking: ' + err.response.data.message);
+    }
   };
 
   return (
@@ -117,6 +254,18 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           </button>
           <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteCar')}>
             Delete Car
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('updateCustomer')}>
+            Update Customer
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteCustomer')}>
+            Delete Customer
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('updateBooking')}>
+            Update Booking
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteBooking')}>
+            Delete Booking
           </button>
           <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('viewCars')}>
             View Cars
@@ -306,6 +455,211 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           </button>
         </div>
       )}
+      {view === 'updateCar' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Update Car</h2>
+          <input
+            type="text"
+            name="updateCarID"
+            value={formData.updateCarID}
+            onChange={handleInputChange}
+            placeholder="Car ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <select
+            name="updateCarField"
+            value={formData.updateCarField}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          >
+            <option value="">Select Field</option>
+            <option value="brand">Brand</option>
+            <option value="model">Model</option>
+            <option value="type">Type</option>
+            <option value="year">Year</option>
+            <option value="capacity">Capacity</option>
+            <option value="ratePerDay">Rate per Day</option>
+            <option value="available">Available (yes/no)</option>
+          </select>
+          <input
+            type="text"
+            name="updateCarValue"
+            value={formData.updateCarValue}
+            onChange={handleInputChange}
+            placeholder="New Value"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateCar}>
+            Update Car
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
+      {view === 'deleteCar' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Delete Car</h2>
+          <input
+            type="text"
+            name="deleteCarID"
+            value={formData.deleteCarID}
+            onChange={handleInputChange}
+            placeholder="Car ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteCar}>
+            Delete Car
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
+      {view === 'updateCustomer' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Update Customer</h2>
+          <input
+            type="text"
+            name="updateCustomerID"
+            value={formData.updateCustomerID}
+            onChange={handleInputChange}
+            placeholder="Customer ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <select
+            name="updateCustomerField"
+            value={formData.updateCustomerField}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          >
+            <option value="">Select Field</option>
+            <option value="name">Name</option>
+            <option value="license">License Number</option>
+            <option value="contact">Contact Info</option>
+          </select>
+          <input
+            type="text"
+            name="updateCustomerValue"
+            value={formData.updateCustomerValue}
+            onChange={handleInputChange}
+            placeholder="New Value"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateCustomer}>
+            Update Customer
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
+      {view === 'deleteCustomer' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Delete Customer</h2>
+          <input
+            type="text"
+            name="deleteCustomerID"
+            value={formData.deleteCustomerID}
+            onChange={handleInputChange}
+            placeholder="Customer ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteCustomer}>
+            Delete Customer
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
+      {view === 'updateBooking' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Update Booking</h2>
+          <input
+            type="text"
+            name="updateBookingID"
+            value={formData.updateBookingID}
+            onChange={handleInputChange}
+            placeholder="Booking ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <select
+            name="updateBookingField"
+            value={formData.updateBookingField}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          >
+            <option value="">Select Field</option>
+            <option value="customerID">Customer ID</option>
+            <option value="carID">Car ID</option>
+            <option value="startDate">Start Date</option>
+            <option value="endDate">End Date</option>
+          </select>
+          {formData.updateBookingField === 'startDate' || formData.updateBookingField === 'endDate' ? (
+            <>
+              <input
+                type="number"
+                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartDay' : 'updateBookingEndDay'}
+                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartDay : formData.updateBookingEndDay}
+                onChange={handleInputChange}
+                placeholder={formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}
+                className="border border-gray-300 p-2 m-2 rounded w-full"
+              />
+              <input
+                type="number"
+                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartMonth' : 'updateBookingEndMonth'}
+                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartMonth : formData.updateBookingEndMonth}
+                onChange={handleInputChange}
+                placeholder={formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}
+                className="border border-gray-300 p-2 m-2 rounded w-full"
+              />
+              <input
+                type="number"
+                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartYear' : 'updateBookingEndYear'}
+                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartYear : formData.updateBookingEndYear}
+                onChange={handleInputChange}
+                placeholder={formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}
+                className="border border-gray-300 p-2 m-2 rounded w-full"
+              />
+            </>
+          ) : (
+            <input
+              type="text"
+              name="updateBookingValue"
+              value={formData.updateBookingValue}
+              onChange={handleInputChange}
+              placeholder="New Value"
+              className="border border-gray-300 p-2 m-2 rounded w-full"
+            />
+          )}
+          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateBooking}>
+            Update Booking
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
+      {view === 'deleteBooking' && (
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Delete Booking</h2>
+          <input
+            type="text"
+            name="deleteBookingID"
+            value={formData.deleteBookingID}
+            onChange={handleInputChange}
+            placeholder="Booking ID"
+            className="border border-gray-300 p-2 m-2 rounded w-full"
+          />
+          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteBooking}>
+            Delete Booking
+          </button>
+          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
+            Back
+          </button>
+        </div>
+      )}
       {view === 'viewCars' && (
         <div className="max-w-4xl mx-auto">
           <h2 className="text-xl font-semibold mb-4">All Cars</h2>
@@ -395,60 +749,6 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               ))}
             </tbody>
           </table>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
-        </div>
-      )}
-      {view === 'updateCar' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Update Car</h2>
-          <input
-            type="text"
-            name="updateCarID"
-            value={formData.updateCarID}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="updateField"
-            value={formData.updateField}
-            onChange={handleInputChange}
-            placeholder="Field to Update (e.g., brand, model)"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="updateValue"
-            value={formData.updateValue}
-            onChange={handleInputChange}
-            placeholder="New Value"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateCarField}>
-            Update Car
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
-        </div>
-      )}
-      {view === 'deleteCar' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Delete Car</h2>
-          <input
-            type="text"
-            name="updateCarID"
-            value={formData.updateCarID}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteCar}>
-            Delete Car
-          </button>
           <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
             Back
           </button>
