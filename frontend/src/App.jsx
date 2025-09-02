@@ -1,5 +1,5 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import AdminDashboard from './components/AdminDashboard.jsx';
 import CustomerDashboard from './components/CustomerDashboard.jsx';
 
@@ -15,76 +15,59 @@ function App() {
     loadData();
   }, []);
 
-  const loadData = () => {
-    const carsData = localStorage.getItem('cars');
-    if (carsData) {
-      setCars(parseCars(carsData));
+  const loadData = async () => {
+    try {
+      const carsRes = await axios.get('http://localhost:8080/cars');
+      setCars(carsRes.data);
+      const custRes = await axios.get('http://localhost:8080/customers');
+      setCustomers(custRes.data);
+      const bkRes = await axios.get('http://localhost:8080/bookings');
+      setBookings(bkRes.data);
+    } catch (err) {
+      console.error('Error loading data:', err);
+      alert('Failed to load data. Ensure the backend is running.');
     }
-    const customersData = localStorage.getItem('customers');
-    if (customersData) {
-      setCustomers(parseCustomers(customersData));
+  };
+
+  const saveCar = async (newCar) => {
+    try {
+      await axios.post('http://localhost:8080/cars', newCar);
+      loadData();
+    } catch (err) {
+      console.error('Error saving car:', err);
+      alert('Failed to save car.');
     }
-    const bookingsData = localStorage.getItem('bookings');
-    if (bookingsData) {
-      setBookings(parseBookings(bookingsData));
+  };
+
+  const saveCustomer = async (newCust) => {
+    try {
+      const res = await axios.post('http://localhost:8080/customers', { ...newCust, id: generateCustomerID() });
+      loadData();
+      return res.data.id;
+    } catch (err) {
+      console.error('Error saving customer:', err);
+      alert('Failed to save customer.');
+      return null;
     }
   };
 
-  const saveData = () => {
-    localStorage.setItem('cars', serializeCars(cars));
-    localStorage.setItem('customers', serializeCustomers(customers));
-    localStorage.setItem('bookings', serializeBookings(bookings));
-  };
-
-  const parseCars = (data) => {
-    const lines = data.split('\n').filter((l) => l.trim());
-    return lines.map((line) => {
-      const [carID, brand, model, type, year, capacity, ratePerDay, available] = line.split(' ');
-      return { carID, brand, model, type, year: parseInt(year), capacity: parseInt(capacity), ratePerDay: parseFloat(ratePerDay), available: available === 'true' };
-    });
-  };
-
-  const serializeCars = (carsList) => {
-    return carsList.map((c) => `${c.carID} ${c.brand} ${c.model} ${c.type} ${c.year} ${c.capacity} ${c.ratePerDay.toFixed(2)} ${c.available}`).join('\n');
-  };
-
-  const parseCustomers = (data) => {
-    const lines = data.split('\n').filter((l) => l.trim());
-    return lines.map((line) => {
-      const [customerID, name, licenseNumber, contactInfo] = line.split(' ');
-      return { customerID, name, licenseNumber, contactInfo };
-    });
-  };const serializeCustomers = (custList) => {
-    return custList.map((c) => `${c.customerID} ${c.name} ${c.licenseNumber} ${c.contactInfo}`).join('\n');
-  };
-
-  const parseBookings = (data) => {
-    const lines = data.split('\n').filter((l) => l.trim());
-    return lines.map((line) => {
-      const [bookingID, carID, customerID, startStr, endStr] = line.split(' ');
-      const [startDay, startMonth, startYear] = startStr.split('-').map(Number);
-      const [endDay, endMonth, endYear] = endStr.split('-').map(Number);
-      return {
-        bookingID,
-        carID,
-        customerID,
-        startDate: { day: startDay, month: startMonth, year: startYear },
-        endDate: { day: endDay, month: endMonth, year: endYear },
-      };
-    });
-  };
-
-  const serializeBookings = (bkList) => {
-    return bkList
-      .map((b) => `${b.bookingID} ${b.carID} ${b.customerID} ${b.startDate.day}-${b.startDate.month}-${b.startDate.year} ${b.endDate.day}-${b.endDate.month}-${b.endDate.year}`)
-      .join('\n');
+  const saveBooking = async (newBooking) => {
+    try {
+      await axios.post('http://localhost:8080/bookings', newBooking);
+      loadData();
+    } catch (err) {
+      console.error('Error saving booking:', err);
+      alert('Failed to save booking.');
+    }
   };
 
   const generateCustomerID = () => {
     if (customers.length === 0) return 'C001';
-    const maxID = customers.reduce((max, c) => Math.max(max, parseInt(c.customerID.substr(1))), 0);
+    const maxID = customers.reduce((max, c) => Math.max(max, parseInt(c.id.substr(1))), 0);
     return 'C' + String(maxID + 1).padStart(3, '0');
-  };const generateBookingID = () => {
+  };
+
+  const generateBookingID = () => {
     if (bookings.length === 0) return 'B001';
     const maxID = bookings.reduce((max, b) => Math.max(max, parseInt(b.bookingID.substr(1))), 0);
     return 'B' + String(maxID + 1).padStart(3, '0');
@@ -110,34 +93,40 @@ function App() {
       alert('Incorrect password');
     }
   };
-  
-  if (!role) {
-  return (
-    <div className="text-center mt-12">
-      <h1 className="text-3xl font-bold text-gray-800">Welcome to Car Rental System</h1>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={() => handleRoleSelect('admin')}>Admin</button>
-      <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={() => handleRoleSelect('customer')}>Customer</button>
-    </div>
-  );
-}
-if (!authenticated) {
-  return (
-    <div className="text-center mt-12">
-      <h1 className="text-3xl font-bold text-gray-800">Admin Login</h1>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border border-gray-300 p-2 m-2 rounded w-64"
-      />
-      <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={handleLogin}>
-        Login
-      </button>
-    </div>
-  );
-}
 
-  const props = { cars, setCars, customers, setCustomers, bookings, setBookings, saveData, generateCustomerID, generateBookingID, dateLessThan };
+  if (!role) {
+    return (
+      <div className="text-center mt-12">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome to Car Rental System</h1>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={() => handleRoleSelect('admin')}>
+          Admin
+        </button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={() => handleRoleSelect('customer')}>
+          Customer
+        </button>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="text-center mt-12">
+        <h1 className="text-3xl font-bold text-gray-800">Admin Login</h1>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border border-gray-300 p-2 m-2 rounded w-64"
+          placeholder="Enter admin password"
+        />
+        <button className="bg-blue-500 text-white px-4 py-2 rounded m-2 hover:bg-blue-600" onClick={handleLogin}>
+          Login
+        </button>
+      </div>
+    );
+  }
+
+  const props = { cars, setCars, customers, setCustomers, bookings, setBookings, saveCar, saveCustomer, saveBooking, generateCustomerID, generateBookingID, dateLessThan };
 
   return role === 'admin' ? <AdminDashboard {...props} /> : <CustomerDashboard {...props} />;
 }
