@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <exception>  // For runtime_error
 #include "httplib.h"
 #include "json.hpp"
 
@@ -215,8 +216,7 @@ private:
     void saveCars() {
         ofstream file("backend/cars.txt");
         if (!file) {
-            cout << "Error opening cars file for writing.\n";
-            return;
+            throw runtime_error("Error opening car file for writing.");
         }
         for (size_t i = 0; i < cars.size(); i++) {
             file << cars[i].serialize() << endl;
@@ -242,8 +242,7 @@ private:
     void saveCustomers() {
         ofstream file("backend/customers.txt");
         if (!file) {
-            cout << "Error opening customer file for writing.\n";
-            return;
+            throw runtime_error("Error opening customer file for writing.");
         }
         for (size_t i = 0; i < customers.size(); ++i) {
             file << customers[i].serialize() << endl;
@@ -270,8 +269,7 @@ private:
     void saveBookings() {
         ofstream file("backend/bookings.txt");
         if (!file) {
-            cout << "Error opening bookings file for writing.\n";
-            return;
+            throw runtime_error("Error opening booking file for writing.");
         }
         for (size_t i = 0; i < bookings.size(); i++) {
             file << bookings[i].serialize() << endl;
