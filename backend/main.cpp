@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <exception>  // For runtime_error
+#include <exception>
 #include "httplib.h"
 #include "json.hpp"
 
@@ -199,7 +199,7 @@ private:
     void loadCars() {
         ifstream file("backend/cars.txt");
         if (!file.is_open()) {
-            cout << "Error: Could not open the file for loading car data.\n";
+            cout << "Warning: Could not open backend/cars.txt for loading. Starting with empty car list.\n";
             return;
         }
         string id, brand, type, model, available;
@@ -227,7 +227,7 @@ private:
     void loadCustomers() {
         ifstream file("backend/customers.txt");
         if (!file.is_open()) {
-            cout << "Error: Could not open the file for loading customer data.\n";
+            cout << "Warning: Could not open backend/customers.txt for loading. Starting with empty customer list.\n";
             return;
         }
         string id, name, license, contact;
@@ -253,7 +253,7 @@ private:
     void loadBookings() {
         ifstream file("backend/bookings.txt");
         if (!file.is_open()) {
-            cout << "Error: Could not open the file for loading booking data.\n";
+            cout << "Warning: Could not open backend/bookings.txt for loading. Starting with empty booking list.\n";
             return;
         }
         string bid, cid, cuid;
@@ -288,8 +288,12 @@ public:
         int maxID = 0;
         for (size_t i = 0; i < customers.size(); ++i) {
             string id = customers[i].getID().substr(1);
-            int num = stoi(id);
-            if (num > maxID) maxID = num;
+            try {
+                int num = stoi(id);
+                if (num > maxID) maxID = num;
+            } catch (...) {
+                continue;
+            }
         }
         maxID++;
         ostringstream oss;
@@ -301,8 +305,12 @@ public:
         int maxID = 0;
         for (size_t i = 0; i < bookings.size(); ++i) {
             string id = bookings[i].getBookingID().substr(1);
-            int num = stoi(id);
-            if (num > maxID) maxID = num;
+            try {
+                int num = stoi(id);
+                if (num > maxID) maxID = num;
+            } catch (...) {
+                continue;
+            }
         }
         maxID++;
         ostringstream oss;
@@ -344,38 +352,38 @@ public:
                 } else if (field == "year") {
                     try {
                         int newYear = stoi(value);
-                        if (newYear < 1900 || newYear > 2025) return false;
+                        if (newYear < 1900 || newYear > 2025) throw runtime_error("Invalid year: must be between 1900 and 2025.");
                         cars[i].setYear(newYear);
                     } catch (...) {
-                        return false;
+                        throw runtime_error("Invalid year format.");
                     }
                 } else if (field == "capacity") {
                     try {
                         int newCap = stoi(value);
-                        if (newCap <= 0) return false;
+                        if (newCap <= 0) throw runtime_error("Invalid capacity: must be positive.");
                         cars[i].setCapacity(newCap);
                     } catch (...) {
-                        return false;
+                        throw runtime_error("Invalid capacity format.");
                     }
                 } else if (field == "ratePerDay") {
                     try {
                         double newRate = stod(value);
-                        if (newRate <= 0) return false;
+                        if (newRate <= 0) throw runtime_error("Invalid rate: must be positive.");
                         cars[i].setRatePerDay(newRate);
                     } catch (...) {
-                        return false;
+                        throw runtime_error("Invalid rate format.");
                     }
                 } else if (field == "available") {
                     bool isAvail = (value == "yes" || value == "Yes" || value == "true");
                     cars[i].setAvailability(isAvail);
                 } else {
-                    return false;
+                    throw runtime_error("Invalid field for car update.");
                 }
                 saveCars();
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Car not found.");
     }
 
     bool deleteCar(string id) {
@@ -386,26 +394,29 @@ public:
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Car not found.");
     }
 
     bool updateCustomer(string id, string field, string value) {
         for (size_t i = 0; i < customers.size(); i++) {
             if (customers[i].getID() == id) {
                 if (field == "name") {
+                    if (value.empty()) throw runtime_error("Name cannot be empty.");
                     customers[i].setName(value);
                 } else if (field == "license") {
+                    if (value.empty()) throw runtime_error("License cannot be empty.");
                     customers[i].setLicenseNumber(value);
                 } else if (field == "contact") {
+                    if (value.empty()) throw runtime_error("Contact cannot be empty.");
                     customers[i].setContactInfo(value);
                 } else {
-                    return false;
+                    throw runtime_error("Invalid field for customer update.");
                 }
                 saveCustomers();
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Customer not found.");
     }
 
     bool deleteCustomer(string id) {
@@ -416,28 +427,34 @@ public:
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Customer not found.");
     }
 
     bool updateBooking(string id, string field, string value, Date dateValue = {0, 0, 0}) {
         for (size_t i = 0; i < bookings.size(); i++) {
             if (bookings[i].getBookingID() == id) {
                 if (field == "customerID") {
+                    if (value.empty()) throw runtime_error("Customer ID cannot be empty.");
                     bookings[i].setCustomerID(value);
                 } else if (field == "carID") {
+                    if (value.empty()) throw runtime_error("Car ID cannot be empty.");
                     bookings[i].setCarID(value);
                 } else if (field == "startDate") {
+                    if (dateValue.day <= 0 || dateValue.month <= 0 || dateValue.year <= 0)
+                        throw runtime_error("Invalid start date.");
                     bookings[i].setStartDate(dateValue);
                 } else if (field == "endDate") {
+                    if (dateValue.day <= 0 || dateValue.month <= 0 || dateValue.year <= 0)
+                        throw runtime_error("Invalid end date.");
                     bookings[i].setEndDate(dateValue);
                 } else {
-                    return false;
+                    throw runtime_error("Invalid field for booking update.");
                 }
                 saveBookings();
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Booking not found.");
     }
 
     bool deleteBooking(string id) {
@@ -456,7 +473,7 @@ public:
                 return true;
             }
         }
-        return false;
+        throw runtime_error("Booking not found.");
     }
 
     const vector<Car>& getCars() const { return cars; }
@@ -470,9 +487,16 @@ void to_json(json& j, const Date& date) {
 }
 
 void from_json(const json& j, Date& date) {
-    j.at("day").get_to(date.day);
-    j.at("month").get_to(date.month);
-    j.at("year").get_to(date.year);
+    try {
+        j.at("day").get_to(date.day);
+        j.at("month").get_to(date.month);
+        j.at("year").get_to(date.year);
+        if (date.day <= 0 || date.month <= 0 || date.year <= 0) {
+            throw runtime_error("Invalid date: day, month, and year must be positive.");
+        }
+    } catch (...) {
+        throw runtime_error("Invalid date format in JSON.");
+    }
 }
 
 void to_json(json& j, const Car& car) {
@@ -493,14 +517,24 @@ void from_json(const json& j, Car& car) {
     int capacity, year;
     double rate;
     bool available;
-    j.at("id").get_to(id);
-    j.at("brand").get_to(brand);
-    j.at("type").get_to(type);
-    j.at("capacity").get_to(capacity);
-    j.at("available").get_to(available);
-    j.at("model").get_to(model);
-    j.at("year").get_to(year);
-    j.at("rate").get_to(rate);
+    try {
+        j.at("id").get_to(id);
+        j.at("brand").get_to(brand);
+        j.at("type").get_to(type);
+        j.at("capacity").get_to(capacity);
+        j.at("available").get_to(available);
+        j.at("model").get_to(model);
+        j.at("year").get_to(year);
+        j.at("rate").get_to(rate);
+        if (id.empty()) throw runtime_error("Car ID cannot be empty.");
+        if (brand.empty()) throw runtime_error("Brand cannot be empty.");
+        if (type.empty()) throw runtime_error("Type cannot be empty.");
+        if (capacity <= 0) throw runtime_error("Capacity must be positive.");
+        if (year < 1900 || year > 2025) throw runtime_error("Year must be between 1900 and 2025.");
+        if (rate < 0) throw runtime_error("Rate cannot be negative.");
+    } catch (...) {
+        throw runtime_error("Invalid car data in JSON.");
+    }
     car.deserialize(id, brand, type, model, year, capacity, rate, available);
 }
 
@@ -515,10 +549,17 @@ void to_json(json& j, const Customer& cust) {
 
 void from_json(const json& j, Customer& cust) {
     string id, name, license, contact;
-    j.at("id").get_to(id);
-    j.at("name").get_to(name);
-    j.at("license").get_to(license);
-    j.at("contact").get_to(contact);
+    try {
+        j.at("id").get_to(id);
+        j.at("name").get_to(name);
+        j.at("license").get_to(license);
+        j.at("contact").get_to(contact);
+        if (name.empty()) throw runtime_error("Name cannot be empty.");
+        if (license.empty()) throw runtime_error("License cannot be empty.");
+        if (contact.empty()) throw runtime_error("Contact cannot be empty.");
+    } catch (...) {
+        throw runtime_error("Invalid customer data in JSON.");
+    }
     cust.deserialize(id, name, license, contact);
 }
 
@@ -535,11 +576,17 @@ void to_json(json& j, const Booking& bk) {
 void from_json(const json& j, Booking& bk) {
     string bid, cid, cuid;
     Date start, end;
-    j.at("bookingID").get_to(bid);
-    j.at("carID").get_to(cid);
-    j.at("customerID").get_to(cuid);
-    j.at("startDate").get_to(start);
-    j.at("endDate").get_to(end);
+    try {
+        j.at("bookingID").get_to(bid);
+        j.at("carID").get_to(cid);
+        j.at("customerID").get_to(cuid);
+        j.at("startDate").get_to(start);
+        j.at("endDate").get_to(end);
+        if (cid.empty()) throw runtime_error("Car ID cannot be empty.");
+        if (cuid.empty()) throw runtime_error("Customer ID cannot be empty.");
+    } catch (...) {
+        throw runtime_error("Invalid booking data in JSON.");
+    }
     bk.deserialize(bid, cid, cuid, start, end);
 }
 
@@ -548,35 +595,53 @@ int main() {
     httplib::Server svr;
 
     svr.Get("/cars", [&rs](const httplib::Request&, httplib::Response& res) {
-        json j = rs.getCars();
-        res.set_content(j.dump(), "application/json");
+        try {
+            json j = rs.getCars();
+            res.set_content(j.dump(), "application/json");
+        } catch (const exception& e) {
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
+            res.status = 500;
+        }
         res.set_header("Access-Control-Allow-Origin", "*");
     });
 
     svr.Get("/customers", [&rs](const httplib::Request&, httplib::Response& res) {
-        json j = rs.getCustomers();
-        res.set_content(j.dump(), "application/json");
+        try {
+            json j = rs.getCustomers();
+            res.set_content(j.dump(), "application/json");
+        } catch (const exception& e) {
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
+            res.status = 500;
+        }
         res.set_header("Access-Control-Allow-Origin", "*");
     });
 
     svr.Get("/bookings", [&rs](const httplib::Request&, httplib::Response& res) {
-        json j = rs.getBookings();
-        res.set_content(j.dump(), "application/json");
+        try {
+            json j = rs.getBookings();
+            res.set_content(j.dump(), "application/json");
+        } catch (const exception& e) {
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
+            res.status = 500;
+        }
         res.set_header("Access-Control-Allow-Origin", "*");
     });
 
     svr.Post("/cars", [&rs](const httplib::Request& req, httplib::Response& res) {
         try {
             json j = json::parse(req.body);
+            if (j["id"].get<string>().empty() || !isalpha(j["id"].get<string>()[0])) {
+                throw runtime_error("Invalid Car ID: must be non-empty and start with a letter.");
+            }
+            if (j["brand"].get<string>().empty()) throw runtime_error("Brand cannot be empty.");
+            if (j["type"].get<string>().empty()) throw runtime_error("Type cannot be empty.");
+            if (j["capacity"].get<int>() <= 0) throw runtime_error("Capacity must be positive.");
+            if (j["year"].get<int>() < 1900 || j["year"].get<int>() > 2025) throw runtime_error("Year must be between 1900 and 2025.");
+            if (j["rate"].get<double>() < 0) throw runtime_error("Rate cannot be negative.");
             Car car;
             from_json(j, car);
-            if (!j["id"].get<string>().empty() && isalpha(j["id"].get<string>()[0])) {
-                rs.addCar(car);
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid Car ID"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            rs.addCar(car);
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -587,6 +652,9 @@ int main() {
     svr.Post("/customers", [&rs](const httplib::Request& req, httplib::Response& res) {
         try {
             json j = json::parse(req.body);
+            if (j["name"].get<string>().empty()) throw runtime_error("Name cannot be empty.");
+            if (j["license"].get<string>().empty()) throw runtime_error("License cannot be empty.");
+            if (j["contact"].get<string>().empty()) throw runtime_error("Contact cannot be empty.");
             Customer cust;
             string id = rs.generateCustomerID();
             j["id"] = id;
@@ -603,6 +671,8 @@ int main() {
     svr.Post("/bookings", [&rs](const httplib::Request& req, httplib::Response& res) {
         try {
             json j = json::parse(req.body);
+            if (j["carID"].get<string>().empty()) throw runtime_error("Car ID cannot be empty.");
+            if (j["customerID"].get<string>().empty()) throw runtime_error("Customer ID cannot be empty.");
             Booking bk;
             j["bookingID"] = rs.generateBookingID();
             from_json(j, bk);
@@ -621,18 +691,16 @@ int main() {
                 }
             }
             if (!validCar) {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Car not available or not found"} }).dump(), "application/json");
-                res.status = 400;
-            } else if (!validCustomer) {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Customer not found"} }).dump(), "application/json");
-                res.status = 400;
-            } else if (bk.getEndDate() < bk.getStartDate()) {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "End date before start date"} }).dump(), "application/json");
-                res.status = 400;
-            } else {
-                rs.addBooking(bk);
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
+                throw runtime_error("Car not available or not found.");
             }
+            if (!validCustomer) {
+                throw runtime_error("Customer not found.");
+            }
+            if (bk.getEndDate() < bk.getStartDate()) {
+                throw runtime_error("End date must not be before start date.");
+            }
+            rs.addBooking(bk);
+            res.set_content(nlohmann::json({ {"status", "success"}, {"bookingID", bk.getBookingID()} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -646,13 +714,10 @@ int main() {
             string id = j["id"].get<string>();
             string field = j["field"].get<string>();
             string value = j["value"].get<string>();
+            if (id.empty()) throw runtime_error("Car ID cannot be empty.");
+            if (field.empty()) throw runtime_error("Field cannot be empty.");
             bool success = rs.updateCar(id, field, value);
-            if (success) {
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or car not found"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -664,13 +729,9 @@ int main() {
         try {
             json j = json::parse(req.body);
             string id = j["id"].get<string>();
+            if (id.empty()) throw runtime_error("Car ID cannot be empty.");
             bool success = rs.deleteCar(id);
-            if (success) {
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Car not found"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -684,13 +745,10 @@ int main() {
             string id = j["id"].get<string>();
             string field = j["field"].get<string>();
             string value = j["value"].get<string>();
+            if (id.empty()) throw runtime_error("Customer ID cannot be empty.");
+            if (field.empty()) throw runtime_error("Field cannot be empty.");
             bool success = rs.updateCustomer(id, field, value);
-            if (success) {
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or customer not found"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -702,13 +760,9 @@ int main() {
         try {
             json j = json::parse(req.body);
             string id = j["id"].get<string>();
+            if (id.empty()) throw runtime_error("Customer ID cannot be empty.");
             bool success = rs.deleteCustomer(id);
-            if (success) {
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Customer not found"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
@@ -721,24 +775,16 @@ int main() {
             json j = json::parse(req.body);
             string id = j["id"].get<string>();
             string field = j["field"].get<string>();
+            if (id.empty()) throw runtime_error("Booking ID cannot be empty.");
+            if (field.empty()) throw runtime_error("Field cannot be empty.");
             if (field == "startDate" || field == "endDate") {
                 Date dateValue = j["dateValue"].get<Date>();
                 bool success = rs.updateBooking(id, field, "", dateValue);
-                if (success) {
-                    res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-                } else {
-                    res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or booking not found"} }).dump(), "application/json");
-                    res.status = 400;
-                }
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             } else {
                 string value = j["value"].get<string>();
                 bool success = rs.updateBooking(id, field, value);
-                if (success) {
-                    res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-                } else {
-                    res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid field or booking not found"} }).dump(), "application/json");
-                    res.status = 400;
-                }
+                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
             }
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
@@ -751,13 +797,9 @@ int main() {
         try {
             json j = json::parse(req.body);
             string id = j["id"].get<string>();
+            if (id.empty()) throw runtime_error("Booking ID cannot be empty.");
             bool success = rs.deleteBooking(id);
-            if (success) {
-                res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
-            } else {
-                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Booking not found"} }).dump(), "application/json");
-                res.status = 400;
-            }
+            res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
             res.status = 400;
