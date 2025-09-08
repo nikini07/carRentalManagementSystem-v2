@@ -102,7 +102,8 @@ function App() {
           Admin
         </button>
         <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={() => handleRoleSelect('customer')}>
-          Customer
+          Customercd ~/carRentalManagementSystem-v2/frontend
+mkdir -p src/components
         </button>
       </div>
     );
