@@ -14,6 +14,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     updateBookingEndDay: '', updateBookingEndMonth: '', updateBookingEndYear: '',
     deleteCarID: '', deleteCustomerID: '', deleteBookingID: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,73 +35,90 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
   };
 
   const addCar = async () => {
+    setIsLoading(true);
     const { id, brand, model, type, year, capacity, rate } = formData;
     if (!id || !/^[A-Za-z]\d*$/.test(id)) {
       alert('Invalid Car ID. Must start with a letter followed by digits.');
+      setIsLoading(false);
       return;
     }
     if (!brand || !model || !type) {
       alert('Brand, Model, Type cannot be empty.');
+      setIsLoading(false);
       return;
     }
     const y = parseInt(year);
     if (isNaN(y) || y < 1900 || y > 2025) {
       alert('Invalid year.');
+      setIsLoading(false);
       return;
     }
     const cap = parseInt(capacity);
     if (isNaN(cap) || cap <= 0) {
       alert('Invalid capacity.');
+      setIsLoading(false);
       return;
     }
     const r = parseFloat(rate);
     if (isNaN(r) || r <= 0) {
       alert('Invalid rate.');
+      setIsLoading(false);
       return;
     }
     await saveCar({ id, brand, model, type, year: y, capacity: cap, rate: r });
     resetForm();
     setView('menu');
+    setIsLoading(false);
   };
 
   const addCustomer = async () => {
+    setIsLoading(true);
     const { name, license, contact } = formData;
     if (!name || !license || !contact) {
       alert('All fields required.');
+      setIsLoading(false);
       return;
     }
     await saveCustomer({ name, license, contact });
     resetForm();
     setView('menu');
+    setIsLoading(false);
   };
 
   const addBooking = async () => {
+    setIsLoading(true);
     const { carID, customerID, startDay, startMonth, startYear, endDay, endMonth, endYear } = formData;
     const car = cars.find((c) => c.id === carID && c.available);
     if (!car) {
       alert('Car not available or not found.');
+      setIsLoading(false);
       return;
     }
     if (!customers.some((c) => c.id === customerID)) {
       alert('Customer not found.');
+      setIsLoading(false);
       return;
     }
     const startDate = { day: parseInt(startDay), month: parseInt(startMonth), year: parseInt(startYear) };
     const endDate = { day: parseInt(endDay), month: parseInt(endMonth), year: parseInt(endYear) };
     if (dateLessThan(endDate, startDate)) {
       alert('End date cannot be before start date.');
+      setIsLoading(false);
       return;
     }
     const bookingID = generateBookingID();
     await saveBooking({ bookingID, carID, customerID, startDate, endDate });
     resetForm();
     setView('menu');
+    setIsLoading(false);
   };
 
   const updateCar = async () => {
+    setIsLoading(true);
     const { updateCarID, updateCarField, updateCarValue } = formData;
     if (!updateCarID || !updateCarField || !updateCarValue) {
       alert('All fields required.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -117,12 +135,15 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to update car: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   const deleteCar = async () => {
+    setIsLoading(true);
     const { deleteCarID } = formData;
     if (!deleteCarID) {
       alert('Car ID required.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -135,12 +156,15 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to delete car: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   const updateCustomer = async () => {
+    setIsLoading(true);
     const { updateCustomerID, updateCustomerField, updateCustomerValue } = formData;
     if (!updateCustomerID || !updateCustomerField || !updateCustomerValue) {
       alert('All fields required.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -157,12 +181,15 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to update customer: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   const deleteCustomer = async () => {
+    setIsLoading(true);
     const { deleteCustomerID } = formData;
     if (!deleteCustomerID) {
       alert('Customer ID required.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -175,20 +202,25 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to delete customer: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   const updateBooking = async () => {
+    setIsLoading(true);
     const { updateBookingID, updateBookingField, updateBookingValue, updateBookingStartDay, updateBookingStartMonth, updateBookingStartYear, updateBookingEndDay, updateBookingEndMonth, updateBookingEndYear } = formData;
     if (!updateBookingID || !updateBookingField) {
       alert('Booking ID and field required.');
+      setIsLoading(false);
       return;
     }
     if ((updateBookingField === 'startDate' || updateBookingField === 'endDate') && (!updateBookingStartDay || !updateBookingStartMonth || !updateBookingStartYear || !updateBookingEndDay || !updateBookingEndMonth || !updateBookingEndYear)) {
       alert('Date fields required for date update.');
+      setIsLoading(false);
       return;
     }
     if (updateBookingField !== 'startDate' && updateBookingField !== 'endDate' && !updateBookingValue) {
       alert('Value required for non-date fields.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -215,12 +247,15 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to update booking: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   const deleteBooking = async () => {
+    setIsLoading(true);
     const { deleteBookingID } = formData;
     if (!deleteBookingID) {
       alert('Booking ID required.');
+      setIsLoading(false);
       return;
     }
     try {
@@ -233,525 +268,600 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
     } catch (err) {
       alert('Failed to delete booking: ' + err.response.data.message);
     }
+    setIsLoading(false);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">Admin Dashboard</h1>
+    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Admin Dashboard</h1>
       {view === 'menu' && (
-        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('addCar')}>
-            Add Car
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('addCustomer')}>
-            Add Customer
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('addBooking')}>
-            Add Booking
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('updateCar')}>
-            Update Car
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteCar')}>
-            Delete Car
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('updateCustomer')}>
-            Update Customer
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteCustomer')}>
-            Delete Customer
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('updateBooking')}>
-            Update Booking
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('deleteBooking')}>
-            Delete Booking
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('viewCars')}>
-            View Cars
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('viewCustomers')}>
-            View Customers
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setView('viewBookings')}>
-            View Bookings
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {[
+            { label: 'Add Car', view: 'addCar' },
+            { label: 'Add Customer', view: 'addCustomer' },
+            { label: 'Add Booking', view: 'addBooking' },
+            { label: 'Update Car', view: 'updateCar' },
+            { label: 'Delete Car', view: 'deleteCar' },
+            { label: 'Update Customer', view: 'updateCustomer' },
+            { label: 'Delete Customer', view: 'deleteCustomer' },
+            { label: 'Update Booking', view: 'updateBooking' },
+            { label: 'Delete Booking', view: 'deleteBooking' },
+            { label: 'View Cars', view: 'viewCars' },
+            { label: 'View Customers', view: 'viewCustomers' },
+            { label: 'View Bookings', view: 'viewBookings' },
+          ].map((item) => (
+            <button
+              key={item.view}
+              className="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-md hover:bg-blue-700 transform hover:scale-105 transition-all duration-200"
+              onClick={() => setView(item.view)}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       )}
       {view === 'addCar' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Add Car</h2>
-          <input
-            type="text"
-            name="id"
-            value={formData.id}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="brand"
-            value={formData.brand}
-            onChange={handleInputChange}
-            placeholder="Brand"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="model"
-            value={formData.model}
-            onChange={handleInputChange}
-            placeholder="Model"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="type"
-            value={formData.type}
-            onChange={handleInputChange}
-            placeholder="Type"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="year"
-            value={formData.year}
-            onChange={handleInputChange}
-            placeholder="Year"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="capacity"
-            value={formData.capacity}
-            onChange={handleInputChange}
-            placeholder="Capacity"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="rate"
-            value={formData.rate}
-            onChange={handleInputChange}
-            placeholder="Rate per Day"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={addCar}>
-            Add Car
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Car</h2>
+          <div className="space-y-4">
+            {[
+              { name: 'id', placeholder: 'Car ID (e.g., A123)', type: 'text' },
+              { name: 'brand', placeholder: 'Brand', type: 'text' },
+              { name: 'model', placeholder: 'Model', type: 'text' },
+              { name: 'type', placeholder: 'Type', type: 'text' },
+              { name: 'year', placeholder: 'Year', type: 'number' },
+              { name: 'capacity', placeholder: 'Capacity', type: 'number' },
+              { name: 'rate', placeholder: 'Rate per Day', type: 'number' },
+            ].map((field) => (
+              <div key={field.name} className="flex flex-col">
+                <label className="text-sm font-medium text-gray-600 mb-1">{field.placeholder}</label>
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  placeholder={field.placeholder}
+                  className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={addCar}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Adding...' : 'Add Car'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'addCustomer' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Add Customer</h2>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="Name"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="license"
-            value={formData.license}
-            onChange={handleInputChange}
-            placeholder="License Number"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="contact"
-            value={formData.contact}
-            onChange={handleInputChange}
-            placeholder="Contact Info"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={addCustomer}>
-            Add Customer
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Customer</h2>
+          <div className="space-y-4">
+            {[
+              { name: 'name', placeholder: 'Name', type: 'text' },
+              { name: 'license', placeholder: 'License Number', type: 'text' },
+              { name: 'contact', placeholder: 'Contact Info', type: 'text' },
+            ].map((field) => (
+              <div key={field.name} className="flex flex-col">
+                <label className="text-sm font-medium text-gray-600 mb-1">{field.placeholder}</label>
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  placeholder={field.placeholder}
+                  className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={addCustomer}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Adding...' : 'Add Customer'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'addBooking' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Add Booking</h2>
-          <input
-            type="text"
-            name="carID"
-            value={formData.carID}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="text"
-            name="customerID"
-            value={formData.customerID}
-            onChange={handleInputChange}
-            placeholder="Customer ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="startDay"
-            value={formData.startDay}
-            onChange={handleInputChange}
-            placeholder="Start Day"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="startMonth"
-            value={formData.startMonth}
-            onChange={handleInputChange}
-            placeholder="Start Month"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="startYear"
-            value={formData.startYear}
-            onChange={handleInputChange}
-            placeholder="Start Year"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="endDay"
-            value={formData.endDay}
-            onChange={handleInputChange}
-            placeholder="End Day"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="endMonth"
-            value={formData.endMonth}
-            onChange={handleInputChange}
-            placeholder="End Month"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <input
-            type="number"
-            name="endYear"
-            value={formData.endYear}
-            onChange={handleInputChange}
-            placeholder="End Year"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={addBooking}>
-            Add Booking
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Booking</h2>
+          <div className="space-y-4">
+            {[
+              { name: 'carID', placeholder: 'Car ID', type: 'text' },
+              { name: 'customerID', placeholder: 'Customer ID', type: 'text' },
+              { name: 'startDay', placeholder: 'Start Day', type: 'number' },
+              { name: 'startMonth', placeholder: 'Start Month', type: 'number' },
+              { name: 'startYear', placeholder: 'Start Year', type: 'number' },
+              { name: 'endDay', placeholder: 'End Day', type: 'number' },
+              { name: 'endMonth', placeholder: 'End Month', type: 'number' },
+              { name: 'endYear', placeholder: 'End Year', type: 'number' },
+            ].map((field) => (
+              <div key={field.name} className="flex flex-col">
+                <label className="text-sm font-medium text-gray-600 mb-1">{field.placeholder}</label>
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  placeholder={field.placeholder}
+                  className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={addBooking}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Adding...' : 'Add Booking'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'updateCar' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Update Car</h2>
-          <input
-            type="text"
-            name="updateCarID"
-            value={formData.updateCarID}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <select
-            name="updateCarField"
-            value={formData.updateCarField}
-            onChange={handleInputChange}
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          >
-            <option value="">Select Field</option>
-            <option value="brand">Brand</option>
-            <option value="model">Model</option>
-            <option value="type">Type</option>
-            <option value="year">Year</option>
-            <option value="capacity">Capacity</option>
-            <option value="ratePerDay">Rate per Day</option>
-            <option value="available">Available (yes/no)</option>
-          </select>
-          <input
-            type="text"
-            name="updateCarValue"
-            value={formData.updateCarValue}
-            onChange={handleInputChange}
-            placeholder="New Value"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateCar}>
-            Update Car
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Update Car</h2>
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Car ID</label>
+              <input
+                type="text"
+                name="updateCarID"
+                value={formData.updateCarID}
+                onChange={handleInputChange}
+                placeholder="Car ID"
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Field to Update</label>
+              <select
+                name="updateCarField"
+                value={formData.updateCarField}
+                onChange={handleInputChange}
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Field</option>
+                <option value="brand">Brand</option>
+                <option value="model">Model</option>
+                <option value="type">Type</option>
+                <option value="year">Year</option>
+                <option value="capacity">Capacity</option>
+                <option value="ratePerDay">Rate per Day</option>
+                <option value="available">Available (yes/no)</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">New Value</label>
+              <input
+                type="text"
+                name="updateCarValue"
+                value={formData.updateCarValue}
+                onChange={handleInputChange}
+                placeholder="New Value"
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={updateCar}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : 'Update Car'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'deleteCar' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Delete Car</h2>
-          <input
-            type="text"
-            name="deleteCarID"
-            value={formData.deleteCarID}
-            onChange={handleInputChange}
-            placeholder="Car ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteCar}>
-            Delete Car
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Delete Car</h2>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-600 mb-1">Car ID</label>
+            <input
+              type="text"
+              name="deleteCarID"
+              value={formData.deleteCarID}
+              onChange={handleInputChange}
+              placeholder="Car ID"
+              className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+              onClick={deleteCar}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Deleting...' : 'Delete Car'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'updateCustomer' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Update Customer</h2>
-          <input
-            type="text"
-            name="updateCustomerID"
-            value={formData.updateCustomerID}
-            onChange={handleInputChange}
-            placeholder="Customer ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <select
-            name="updateCustomerField"
-            value={formData.updateCustomerField}
-            onChange={handleInputChange}
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          >
-            <option value="">Select Field</option>
-            <option value="name">Name</option>
-            <option value="license">License Number</option>
-            <option value="contact">Contact Info</option>
-          </select>
-          <input
-            type="text"
-            name="updateCustomerValue"
-            value={formData.updateCustomerValue}
-            onChange={handleInputChange}
-            placeholder="New Value"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateCustomer}>
-            Update Customer
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Update Customer</h2>
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Customer ID</label>
+              <input
+                type="text"
+                name="updateCustomerID"
+                value={formData.updateCustomerID}
+                onChange={handleInputChange}
+                placeholder="Customer ID"
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Field to Update</label>
+              <select
+                name="updateCustomerField"
+                value={formData.updateCustomerField}
+                onChange={handleInputChange}
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Field</option>
+                <option value="name">Name</option>
+                <option value="license">License Number</option>
+                <option value="contact">Contact Info</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">New Value</label>
+              <input
+                type="text"
+                name="updateCustomerValue"
+                value={formData.updateCustomerValue}
+                onChange={handleInputChange}
+                placeholder="New Value"
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={updateCustomer}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : 'Update Customer'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'deleteCustomer' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Delete Customer</h2>
-          <input
-            type="text"
-            name="deleteCustomerID"
-            value={formData.deleteCustomerID}
-            onChange={handleInputChange}
-            placeholder="Customer ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteCustomer}>
-            Delete Customer
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Delete Customer</h2>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-600 mb-1">Customer ID</label>
+            <input
+              type="text"
+              name="deleteCustomerID"
+              value={formData.deleteCustomerID}
+              onChange={handleInputChange}
+              placeholder="Customer ID"
+              className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+              onClick={deleteCustomer}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Deleting...' : 'Delete Customer'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'updateBooking' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Update Booking</h2>
-          <input
-            type="text"
-            name="updateBookingID"
-            value={formData.updateBookingID}
-            onChange={handleInputChange}
-            placeholder="Booking ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <select
-            name="updateBookingField"
-            value={formData.updateBookingField}
-            onChange={handleInputChange}
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          >
-            <option value="">Select Field</option>
-            <option value="customerID">Customer ID</option>
-            <option value="carID">Car ID</option>
-            <option value="startDate">Start Date</option>
-            <option value="endDate">End Date</option>
-          </select>
-          {formData.updateBookingField === 'startDate' || formData.updateBookingField === 'endDate' ? (
-            <>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Update Booking</h2>
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Booking ID</label>
               <input
-                type="number"
-                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartDay' : 'updateBookingEndDay'}
-                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartDay : formData.updateBookingEndDay}
+                type="text"
+                name="updateBookingID"
+                value={formData.updateBookingID}
                 onChange={handleInputChange}
-                placeholder={formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}
-                className="border border-gray-300 p-2 m-2 rounded w-full"
+                placeholder="Booking ID"
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-              <input
-                type="number"
-                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartMonth' : 'updateBookingEndMonth'}
-                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartMonth : formData.updateBookingEndMonth}
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-600 mb-1">Field to Update</label>
+              <select
+                name="updateBookingField"
+                value={formData.updateBookingField}
                 onChange={handleInputChange}
-                placeholder={formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}
-                className="border border-gray-300 p-2 m-2 rounded w-full"
-              />
-              <input
-                type="number"
-                name={formData.updateBookingField === 'startDate' ? 'updateBookingStartYear' : 'updateBookingEndYear'}
-                value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartYear : formData.updateBookingEndYear}
-                onChange={handleInputChange}
-                placeholder={formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}
-                className="border border-gray-300 p-2 m-2 rounded w-full"
-              />
-            </>
-          ) : (
-            <input
-              type="text"
-              name="updateBookingValue"
-              value={formData.updateBookingValue}
-              onChange={handleInputChange}
-              placeholder="New Value"
-              className="border border-gray-300 p-2 m-2 rounded w-full"
-            />
-          )}
-          <button className="bg-green-500 text-white px-4 py-2 rounded m-2 hover:bg-green-600" onClick={updateBooking}>
-            Update Booking
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+                className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Field</option>
+                <option value="customerID">Customer ID</option>
+                <option value="carID">Car ID</option>
+                <option value="startDate">Start Date</option>
+                <option value="endDate">End Date</option>
+              </select>
+            </div>
+            {formData.updateBookingField === 'startDate' || formData.updateBookingField === 'endDate' ? (
+              <div className="space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600 mb-1">{formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}</label>
+                  <input
+                    type="number"
+                    name={formData.updateBookingField === 'startDate' ? 'updateBookingStartDay' : 'updateBookingEndDay'}
+                    value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartDay : formData.updateBookingEndDay}
+                    onChange={handleInputChange}
+                    placeholder={formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}
+                    className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600 mb-1">{formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}</label>
+                  <input
+                    type="number"
+                    name={formData.updateBookingField === 'startDate' ? 'updateBookingStartMonth' : 'updateBookingEndMonth'}
+                    value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartMonth : formData.updateBookingEndMonth}
+                    onChange={handleInputChange}
+                    placeholder={formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}
+                    className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600 mb-1">{formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}</label>
+                  <input
+                    type="number"
+                    name={formData.updateBookingField === 'startDate' ? 'updateBookingStartYear' : 'updateBookingEndYear'}
+                    value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartYear : formData.updateBookingEndYear}
+                    onChange={handleInputChange}
+                    placeholder={formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}
+                    className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-600 mb-1">New Value</label>
+                <input
+                  type="text"
+                  name="updateBookingValue"
+                  value={formData.updateBookingValue}
+                  onChange={handleInputChange}
+                  placeholder="New Value"
+                  className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              onClick={updateBooking}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : 'Update Booking'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'deleteBooking' && (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Delete Booking</h2>
-          <input
-            type="text"
-            name="deleteBookingID"
-            value={formData.deleteBookingID}
-            onChange={handleInputChange}
-            placeholder="Booking ID"
-            className="border border-gray-300 p-2 m-2 rounded w-full"
-          />
-          <button className="bg-red-500 text-white px-4 py-2 rounded m-2 hover:bg-red-600" onClick={deleteBooking}>
-            Delete Booking
-          </button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Delete Booking</h2>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-600 mb-1">Booking ID</label>
+            <input
+              type="text"
+              name="deleteBookingID"
+              value={formData.deleteBookingID}
+              onChange={handleInputChange}
+              placeholder="Booking ID"
+              className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+              onClick={() => setView('menu')}
+              disabled={isLoading}
+            >
+              Back
+            </button>
+            <button
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+              onClick={deleteBooking}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Deleting...' : 'Delete Booking'}
+            </button>
+          </div>
         </div>
       )}
       {view === 'viewCars' && (
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">All Cars</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 p-2">ID</th>
-                <th className="border border-gray-300 p-2">Brand</th>
-                <th className="border border-gray-300 p-2">Model</th>
-                <th className="border border-gray-300 p-2">Type</th>
-                <th className="border border-gray-300 p-2">Year</th>
-                <th className="border border-gray-300 p-2">Capacity</th>
-                <th className="border border-gray-300 p-2">Rate/Day</th>
-                <th className="border border-gray-300 p-2">Available</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cars.map((car) => (
-                <tr key={car.id}>
-                  <td className="border border-gray-300 p-2">{car.id}</td>
-                  <td className="border border-gray-300 p-2">{car.brand}</td>
-                  <td className="border border-gray-300 p-2">{car.model}</td>
-                  <td className="border border-gray-300 p-2">{car.type}</td>
-                  <td className="border border-gray-300 p-2">{car.year}</td>
-                  <td className="border border-gray-300 p-2">{car.capacity}</td>
-                  <td className="border border-gray-300 p-2">{car.rate.toFixed(2)}</td>
-                  <td className="border border-gray-300 p-2">{car.available ? 'Yes' : 'No'}</td>
+        <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">All Cars</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-blue-100 text-gray-800">
+                  <th className="p-3 text-left font-semibold">ID</th>
+                  <th className="p-3 text-left font-semibold">Brand</th>
+                  <th className="p-3 text-left font-semibold">Model</th>
+                  <th className="p-3 text-left font-semibold">Type</th>
+                  <th className="p-3 text-left font-semibold">Year</th>
+                  <th className="p-3 text-left font-semibold">Capacity</th>
+                  <th className="p-3 text-left font-semibold">Rate/Day</th>
+                  <th className="p-3 text-left font-semibold">Available</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+              </thead>
+              <tbody>
+                {cars.map((car, index) => (
+                  <tr key={car.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3">{car.id}</td>
+                    <td className="p-3">{car.brand}</td>
+                    <td className="p-3">{car.model}</td>
+                    <td className="p-3">{car.type}</td>
+                    <td className="p-3">{car.year}</td>
+                    <td className="p-3">{car.capacity}</td>
+                    <td className="p-3">${car.rate.toFixed(2)}</td>
+                    <td className="p-3">
+                      <span className={`px-2 py-1 rounded-full text-sm ${car.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {car.available ? 'Yes' : 'No'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-end mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              onClick={() => setView('menu')}
+            >
+              Back
+            </button>
+          </div>
         </div>
       )}
       {view === 'viewCustomers' && (
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">All Customers</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 p-2">ID</th>
-                <th className="border border-gray-300 p-2">Name</th>
-                <th className="border border-gray-300 p-2">License</th>
-                <th className="border border-gray-300 p-2">Contact</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.map((cust) => (
-                <tr key={cust.id}>
-                  <td className="border border-gray-300 p-2">{cust.id}</td>
-                  <td className="border border-gray-300 p-2">{cust.name}</td>
-                  <td className="border border-gray-300 p-2">{cust.license}</td>
-                  <td className="border border-gray-300 p-2">{cust.contact}</td>
+        <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">All Customers</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-blue-100 text-gray-800">
+                  <th className="p-3 text-left font-semibold">ID</th>
+                  <th className="p-3 text-left font-semibold">Name</th>
+                  <th className="p-3 text-left font-semibold">License</th>
+                  <th className="p-3 text-left font-semibold">Contact</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+              </thead>
+              <tbody>
+                {customers.map((cust, index) => (
+                  <tr key={cust.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3">{cust.id}</td>
+                    <td className="p-3">{cust.name}</td>
+                    <td className="p-3">{cust.license}</td>
+                    <td className="p-3">{cust.contact}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-end mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              onClick={() => setView('menu')}
+            >
+              Back
+            </button>
+          </div>
         </div>
       )}
       {view === 'viewBookings' && (
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">All Bookings</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 p-2">Booking ID</th>
-                <th className="border border-gray-300 p-2">Car ID</th>
-                <th className="border border-gray-300 p-2">Customer ID</th>
-                <th className="border border-gray-300 p-2">Start Date</th>
-                <th className="border border-gray-300 p-2">End Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map((bk) => (
-                <tr key={bk.bookingID}>
-                  <td className="border border-gray-300 p-2">{bk.bookingID}</td>
-                  <td className="border border-gray-300 p-2">{bk.carID}</td>
-                  <td className="border border-gray-300 p-2">{bk.customerID}</td>
-                  <td className="border border-gray-300 p-2">{`${bk.startDate.day}-${bk.startDate.month}-${bk.startDate.year}`}</td>
-                  <td className="border border-gray-300 p-2">{`${bk.endDate.day}-${bk.endDate.month}-${bk.endDate.year}`}</td>
+        <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">All Bookings</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-blue-100 text-gray-800">
+                  <th className="p-3 text-left font-semibold">Booking ID</th>
+                  <th className="p-3 text-left font-semibold">Car ID</th>
+                  <th className="p-3 text-left font-semibold">Customer ID</th>
+                  <th className="p-3 text-left font-semibold">Start Date</th>
+                  <th className="p-3 text-left font-semibold">End Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded m-2 hover:bg-gray-600" onClick={() => setView('menu')}>
-            Back
-          </button>
+              </thead>
+              <tbody>
+                {bookings.map((bk, index) => (
+                  <tr key={bk.bookingID} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3">{bk.bookingID}</td>
+                    <td className="p-3">{bk.carID}</td>
+                    <td className="p-3">{bk.customerID}</td>
+                    <td className="p-3">{`${bk.startDate.day}-${bk.startDate.month}-${bk.startDate.year}`}</td>
+                    <td className="p-3">{`${bk.endDate.day}-${bk.endDate.month}-${bk.endDate.year}`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-end mt-6">
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              onClick={() => setView('menu')}
+            >
+              Back
+            </button>
+          </div>
         </div>
       )}
     </div>
