@@ -197,7 +197,7 @@ private:
     vector<Booking> bookings;
 
     void loadCars() {
-        ifstream file("backend/cars.txt");
+        ifstream file("cars.txt");
         if (!file.is_open()) {
             cout << "Warning: Could not open backend/cars.txt for loading. Starting with empty car list.\n";
             return;
@@ -214,7 +214,7 @@ private:
     }
 
     void saveCars() {
-        ofstream file("backend/cars.txt");
+        ofstream file("cars.txt");
         if (!file) {
             throw runtime_error("Error opening car file for writing.");
         }
@@ -225,7 +225,7 @@ private:
     }
 
     void loadCustomers() {
-        ifstream file("backend/customers.txt");
+        ifstream file("customers.txt");
         if (!file.is_open()) {
             cout << "Warning: Could not open backend/customers.txt for loading. Starting with empty customer list.\n";
             return;
@@ -240,7 +240,7 @@ private:
     }
 
     void saveCustomers() {
-        ofstream file("backend/customers.txt");
+        ofstream file("customers.txt");
         if (!file) {
             throw runtime_error("Error opening customer file for writing.");
         }
@@ -251,7 +251,7 @@ private:
     }
 
     void loadBookings() {
-        ifstream file("backend/bookings.txt");
+        ifstream file("bookings.txt");
         if (!file.is_open()) {
             cout << "Warning: Could not open backend/bookings.txt for loading. Starting with empty booking list.\n";
             return;
@@ -267,7 +267,7 @@ private:
     }
 
     void saveBookings() {
-        ofstream file("backend/bookings.txt");
+        ofstream file("bookings.txt");
         if (!file) {
             throw runtime_error("Error opening booking file for writing.");
         }
