@@ -253,7 +253,7 @@ private:
     void loadBookings() {
         ifstream file("bookings.txt");
         if (!file.is_open()) {
-            cout << "Warning: Could not open backend/bookings.txt for loading. Starting with empty booking list.\n";
+            cout << "Warning: Could not open bookings.txt for loading. Starting with empty booking list.\n";
             return;
         }
         string bid, cid, cuid;
