@@ -227,7 +227,7 @@ private:
     void loadCustomers() {
         ifstream file("customers.txt");
         if (!file.is_open()) {
-            cout << "Warning: Could not open backend/customers.txt for loading. Starting with empty customer list.\n";
+            cout << "Warning: Could not open customers.txt for loading. Starting with empty customer list.\n";
             return;
         }
         string id, name, license, contact;
