@@ -199,7 +199,7 @@ private:
     void loadCars() {
         ifstream file("cars.txt");
         if (!file.is_open()) {
-            cout << "Warning: Could not open backend/cars.txt for loading. Starting with empty car list.\n";
+            cout << "Warning: Could not open cars.txt for loading. Starting with empty car list.\n";
             return;
         }
         string id, brand, type, model, available;
