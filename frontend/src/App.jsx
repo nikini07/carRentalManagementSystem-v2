@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CustomerDashboard from './CustomerDashboard';
+import CustomerDashboard from './components/CustomerDashboard';
+import AdminDashboard from './components/AdminDashboard';
 
 const App = () => {
   const [cars, setCars] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +55,39 @@ const App = () => {
     }
   };
 
+  const deleteCar = async (id) => {
+    try {
+      const response = await axios.post('http://localhost:8080/deleteCar', { id });
+      if (response.data.status === 'success') {
+        setCars(cars.filter((car) => car.id !== id));
+      }
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to delete car');
+    }
+  };
+
+  const deleteCustomer = async (id) => {
+    try {
+      const response = await axios.post('http://localhost:8080/deleteCustomer', { id });
+      if (response.data.status === 'success') {
+        setCustomers(customers.filter((customer) => customer.id !== id));
+      }
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to delete customer');
+    }
+  };
+
+  const deleteBooking = async (id) => {
+    try {
+      const response = await axios.post('http://localhost:8080/deleteBooking', { id });
+      if (response.data.status === 'success') {
+        setBookings(bookings.filter((booking) => booking.bookingID !== id));
+      }
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to delete booking');
+    }
+  };
+
   const generateCustomerID = () => {
     const maxID = customers.reduce((max, c) => {
       const num = parseInt(c.id.slice(1)) || 0;
@@ -78,16 +113,46 @@ const App = () => {
   };
 
   return (
-    <CustomerDashboard
-      cars={cars}
-      customers={customers}
-      bookings={bookings}
-      saveCustomer={saveCustomer}
-      saveBooking={saveBooking}
-      generateCustomerID={generateCustomerID}
-      generateBookingID={generateBookingID}
-      dateLessThan={dateLessThan}
-    />
+    <div>
+      <div className="bg-gray-200 p-4 flex justify-center gap-4">
+        <button
+          onClick={() => setIsAdmin(false)}
+          className={`px-4 py-2 rounded ${!isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+        >
+          Customer Dashboard
+        </button>
+        <button
+          onClick={() => setIsAdmin(true)}
+          className={`px-4 py-2 rounded ${isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+        >
+          Admin Dashboard
+        </button>
+      </div>
+      {isAdmin ? (
+        <AdminDashboard
+          cars={cars}
+          customers={customers}
+          bookings={bookings}
+          setCars={setCars}
+          setCustomers={setCustomers}
+          setBookings={setBookings}
+          deleteCar={deleteCar}
+          deleteCustomer={deleteCustomer}
+          deleteBooking={deleteBooking}
+        />
+      ) : (
+        <CustomerDashboard
+          cars={cars}
+          customers={customers}
+          bookings={bookings}
+          saveCustomer={saveCustomer}
+          saveBooking={saveBooking}
+          generateCustomerID={generateCustomerID}
+          generateBookingID={generateBookingID}
+          dateLessThan={dateLessThan}
+        />
+      )}
+    </div>
   );
 };
 
