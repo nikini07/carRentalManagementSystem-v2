@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'gray-850': '#1F2A44', // Custom shade for alternating table rows
+      },
+    },
   },
   plugins: [],
 }
