@@ -1,0 +1,1 @@
+CAR001 Toyota Camry Sedan 2020 5 50.00 true
