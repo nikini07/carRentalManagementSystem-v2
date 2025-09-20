@@ -195,6 +195,8 @@ private:
     vector<Car> cars;
     vector<Customer> customers;
     vector<Booking> bookings;
+    int adminAttempts = 0;
+    const int maxAdminAttempts = 5;
 
     void loadCars() {
         ifstream file("cars.txt");
@@ -211,7 +213,7 @@ private:
             cars.push_back(c);
         }
         file.close();
-        }
+    }
 
     void saveCars() {
         ofstream file("cars.txt");
@@ -275,6 +277,15 @@ private:
             file << bookings[i].serialize() << endl;
         }
         file.close();
+    }
+
+    bool authenticateAdmin(const string& password) {
+        if (password == "admin123") {
+            adminAttempts = 0;
+            return true;
+        }
+        adminAttempts++;
+        return false;
     }
 
 public:
@@ -479,6 +490,13 @@ public:
     const vector<Car>& getCars() const { return cars; }
     const vector<Customer>& getCustomers() const { return customers; }
     const vector<Booking>& getBookings() const { return bookings; }
+
+    bool authenticateAdminLogin(const string& password) {
+        return authenticateAdmin(password);
+    }
+
+    int getAdminAttempts() const { return adminAttempts; }
+    int getMaxAdminAttempts() const { return maxAdminAttempts; }
 };
 
 // JSON serialization for structs
@@ -802,6 +820,29 @@ int main() {
             res.set_content(nlohmann::json({ {"status", "success"} }).dump(), "application/json");
         } catch (const exception& e) {
             res.set_content(nlohmann::json({ {"status", "error"}, {"message", string(e.what())} }).dump(), "application/json");
+            res.status = 400;
+        }
+        res.set_header("Access-Control-Allow-Origin", "*");
+    });
+
+    svr.Post("/adminLogin", [&rs](const httplib::Request& req, httplib::Response& res) {
+        try {
+            json j = json::parse(req.body);
+            string password = j["password"].get<string>();
+            if (rs.getAdminAttempts() >= rs.getMaxAdminAttempts()) {
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Too many attempts. Access locked."} }).dump(), "application/json");
+                res.status = 401;
+                return;
+            }
+            if (rs.authenticateAdminLogin(password)) {
+                res.set_content(nlohmann::json({ {"status", "success"}, {"message", "Login successful"} }).dump(), "application/json");
+            } else {
+                string message = "Incorrect password. " + to_string(rs.getMaxAdminAttempts() - rs.getAdminAttempts()) + " attempt(s) left.";
+                res.set_content(nlohmann::json({ {"status", "error"}, {"message", message} }).dump(), "application/json");
+                res.status = 401;
+            }
+        } catch (const exception& e) {
+            res.set_content(nlohmann::json({ {"status", "error"}, {"message", "Invalid input: " + string(e.what())} }).dump(), "application/json");
             res.status = 400;
         }
         res.set_header("Access-Control-Allow-Origin", "*");
