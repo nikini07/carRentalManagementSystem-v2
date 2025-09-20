@@ -172,6 +172,44 @@ import { useState } from 'react';
        setIsLoading(false);
      };
 
+     const handleDeleteCustomer = async () => {
+       setIsLoading(true);
+       const { deleteCustomerID } = formData;
+       if (!deleteCustomerID) {
+         alert('Customer ID required.');
+         setIsLoading(false);
+         return;
+       }
+       try {
+         await deleteCustomer(deleteCustomerID);
+         alert('Customer deleted successfully.');
+         resetForm();
+         setView('menu');
+       } catch (err) {
+         alert('Failed to delete customer: ' + (err.response?.data?.message || 'Network error'));
+       }
+       setIsLoading(false);
+     };
+
+     const handleDeleteBooking = async () => {
+       setIsLoading(true);
+       const { deleteBookingID } = formData;
+       if (!deleteBookingID) {
+         alert('Booking ID required.');
+         setIsLoading(false);
+         return;
+       }
+       try {
+         await deleteBooking(deleteBookingID);
+         alert('Booking deleted successfully.');
+         resetForm();
+         setView('menu');
+       } catch (err) {
+         alert('Failed to delete booking: ' + (err.response?.data?.message || 'Network error'));
+       }
+       setIsLoading(false);
+     };
+
      const updateCustomer = async () => {
        setIsLoading(true);
        const { updateCustomerID, updateCustomerField, updateCustomerValue } = formData;
@@ -193,25 +231,6 @@ import { useState } from 'react';
          setView('menu');
        } catch (err) {
          alert('Failed to update customer: ' + (err.response?.data?.message || 'Network error'));
-       }
-       setIsLoading(false);
-     };
-
-     const deleteCustomer = async () => {
-       setIsLoading(true);
-       const { deleteCustomerID } = formData;
-       if (!deleteCustomerID) {
-         alert('Customer ID required.');
-         setIsLoading(false);
-         return;
-       }
-       try {
-         await deleteCustomer(deleteCustomerID);
-         alert('Customer deleted successfully.');
-         resetForm();
-         setView('menu');
-       } catch (err) {
-         alert('Failed to delete customer: ' + (err.response?.data?.message || 'Network error'));
        }
        setIsLoading(false);
      };
@@ -257,25 +276,6 @@ import { useState } from 'react';
          setView('menu');
        } catch (err) {
          alert('Failed to update booking: ' + (err.response?.data?.message || 'Network error'));
-       }
-       setIsLoading(false);
-     };
-
-     const deleteBooking = async () => {
-       setIsLoading(true);
-       const { deleteBookingID } = formData;
-       if (!deleteBookingID) {
-         alert('Booking ID required.');
-         setIsLoading(false);
-         return;
-       }
-       try {
-         await deleteBooking(deleteBookingID);
-         alert('Booking deleted successfully.');
-         resetForm();
-         setView('menu');
-       } catch (err) {
-         alert('Failed to delete booking: ' + (err.response?.data?.message || 'Network error'));
        }
        setIsLoading(false);
      };
@@ -513,7 +513,7 @@ import { useState } from 'react';
                  onChange={handleInputChange}
                  placeholder="Car ID"
                  className="bg-gray-800 text-white border border-gray-700 p-3 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
-               />
+                 />
              </div>
              <div className="flex justify-end space-x-4 mt-6">
                <button
@@ -616,7 +616,7 @@ import { useState } from 'react';
                </button>
                <button
                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50"
-                 onClick={deleteCustomer}
+                 onClick={handleDeleteCustomer}
                  disabled={isLoading}
                >
                  {isLoading ? 'Deleting...' : 'Delete Customer'}
@@ -746,7 +746,7 @@ import { useState } from 'react';
                </button>
                <button
                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50"
-                 onClick={deleteBooking}
+                 onClick={handleDeleteBooking}
                  disabled={isLoading}
                >
                  {isLoading ? 'Deleting...' : 'Delete Booking'}
