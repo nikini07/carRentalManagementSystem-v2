@@ -281,8 +281,8 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
   };
 
   return (
-    <div className="container mx-auto p-5 bg-slate-900 min-h-screen text-gray-100 font-sans">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-100 leading-tight">Admin Dashboard</h1>
+    <div className="container mx-auto p-5 bg-neutral-white min-h-screen text-neutral-gray-dark font-sans">
+      <h1 className="text-3xl font-bold mb-6 text-center text-neutral-gray-dark leading-tight">Admin Dashboard</h1>
       {view === 'menu' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
           {[
@@ -301,7 +301,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           ].map((item) => (
             <button
               key={item.view}
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg shadow-sm hover:bg-lime-dark focus:ring-2 focus:ring-lime focus:outline-none transition-colors duration-200"
               onClick={() => setView(item.view)}
             >
               {item.label}
@@ -310,8 +310,8 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'addCar' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Add New Car</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Add New Car</h2>
           <div className="space-y-3">
             {[
               { name: 'id', placeholder: 'Car ID (e.g., A123)', type: 'text' },
@@ -323,28 +323,28 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               { name: 'rate', placeholder: 'Rate per Day', type: 'number' },
             ].map((field) => (
               <div key={field.name} className="flex flex-col">
-                <label className="text-sm font-medium mb-1 text-gray-300">{field.placeholder}</label>
+                <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{field.placeholder}</label>
                 <input
                   type={field.type}
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   placeholder={field.placeholder}
-                  className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                 />
               </div>
             ))}
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={addCar}
               disabled={isLoading}
             >
@@ -354,8 +354,8 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'addCustomer' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Add New Customer</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Add New Customer</h2>
           <div className="space-y-3">
             {[
               { name: 'name', placeholder: 'Name', type: 'text' },
@@ -363,28 +363,28 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               { name: 'contact', placeholder: 'Contact Info', type: 'text' },
             ].map((field) => (
               <div key={field.name} className="flex flex-col">
-                <label className="text-sm font-medium mb-1 text-gray-300">{field.placeholder}</label>
+                <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{field.placeholder}</label>
                 <input
                   type={field.type}
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   placeholder={field.placeholder}
-                  className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                 />
               </div>
             ))}
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={addCustomer}
               disabled={isLoading}
             >
@@ -394,8 +394,8 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'addBooking' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Add New Booking</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Add New Booking</h2>
           <div className="space-y-3">
             {[
               { name: 'carID', placeholder: 'Car ID', type: 'text' },
@@ -408,28 +408,28 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               { name: 'endYear', placeholder: 'End Year', type: 'number' },
             ].map((field) => (
               <div key={field.name} className="flex flex-col">
-                <label className="text-sm font-medium mb-1 text-gray-300">{field.placeholder}</label>
+                <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{field.placeholder}</label>
                 <input
                   type={field.type}
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   placeholder={field.placeholder}
-                  className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                 />
               </div>
             ))}
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={addBooking}
               disabled={isLoading}
             >
@@ -439,27 +439,27 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'updateCar' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Update Car</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Update Car</h2>
           <div className="space-y-3">
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Car ID</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Car ID</label>
               <input
                 type="text"
                 name="updateCarID"
                 value={formData.updateCarID}
                 onChange={handleInputChange}
                 placeholder="Car ID"
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Field to Update</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Field to Update</label>
               <select
                 name="updateCarField"
                 value={formData.updateCarField}
                 onChange={handleInputChange}
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               >
                 <option value="">Select Field</option>
                 <option value="brand">Brand</option>
@@ -472,27 +472,27 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               </select>
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">New Value</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">New Value</label>
               <input
                 type="text"
                 name="updateCarValue"
                 value={formData.updateCarValue}
                 onChange={handleInputChange}
                 placeholder="New Value"
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               />
             </div>
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={updateCar}
               disabled={isLoading}
             >
@@ -502,29 +502,29 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'deleteCar' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Delete Car</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Delete Car</h2>
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1 text-gray-300">Car ID</label>
+            <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Car ID</label>
             <input
               type="text"
               name="deleteCarID"
               value={formData.deleteCarID}
               onChange={handleInputChange}
               placeholder="Car ID"
-              className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
             />
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-red-accent text-neutral-white px-4 py-2 rounded-lg hover:bg-red-accent-600 disabled:opacity-50 transition-colors duration-200"
               onClick={handleDeleteCar}
               disabled={isLoading}
             >
@@ -534,27 +534,27 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'updateCustomer' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Update Customer</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Update Customer</h2>
           <div className="space-y-3">
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Customer ID</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Customer ID</label>
               <input
                 type="text"
                 name="updateCustomerID"
                 value={formData.updateCustomerID}
                 onChange={handleInputChange}
                 placeholder="Customer ID"
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Field to Update</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Field to Update</label>
               <select
                 name="updateCustomerField"
                 value={formData.updateCustomerField}
                 onChange={handleInputChange}
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               >
                 <option value="">Select Field</option>
                 <option value="name">Name</option>
@@ -563,27 +563,27 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               </select>
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">New Value</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">New Value</label>
               <input
                 type="text"
                 name="updateCustomerValue"
                 value={formData.updateCustomerValue}
                 onChange={handleInputChange}
                 placeholder="New Value"
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               />
             </div>
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={updateCustomer}
               disabled={isLoading}
             >
@@ -593,29 +593,29 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'deleteCustomer' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Delete Customer</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Delete Customer</h2>
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1 text-gray-300">Customer ID</label>
+            <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Customer ID</label>
             <input
               type="text"
               name="deleteCustomerID"
               value={formData.deleteCustomerID}
               onChange={handleInputChange}
               placeholder="Customer ID"
-              className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
             />
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-red-accent text-neutral-white px-4 py-2 rounded-lg hover:bg-red-accent-600 disabled:opacity-50 transition-colors duration-200"
               onClick={handleDeleteCustomer}
               disabled={isLoading}
             >
@@ -625,27 +625,27 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'updateBooking' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Update Booking</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Update Booking</h2>
           <div className="space-y-3">
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Booking ID</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Booking ID</label>
               <input
                 type="text"
                 name="updateBookingID"
                 value={formData.updateBookingID}
                 onChange={handleInputChange}
                 placeholder="Booking ID"
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1 text-gray-300">Field to Update</label>
+              <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Field to Update</label>
               <select
                 name="updateBookingField"
                 value={formData.updateBookingField}
                 onChange={handleInputChange}
-                className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
               >
                 <option value="">Select Field</option>
                 <option value="customerID">Customer ID</option>
@@ -657,63 +657,63 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
             {formData.updateBookingField === 'startDate' || formData.updateBookingField === 'endDate' ? (
               <div className="space-y-3">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-1 text-gray-300">{formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}</label>
+                  <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}</label>
                   <input
                     type="number"
                     name={formData.updateBookingField === 'startDate' ? 'updateBookingStartDay' : 'updateBookingEndDay'}
                     value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartDay : formData.updateBookingEndDay}
                     onChange={handleInputChange}
                     placeholder={formData.updateBookingField === 'startDate' ? 'Start Day' : 'End Day'}
-                    className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-1 text-gray-300">{formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}</label>
+                  <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}</label>
                   <input
                     type="number"
                     name={formData.updateBookingField === 'startDate' ? 'updateBookingStartMonth' : 'updateBookingEndMonth'}
-                    value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartMonth : formData.updateBookingEndMonth}
+                    value={formData.updateBookingField === 'startDate' ? 'updateBookingStartMonth' : formData.updateBookingEndMonth}
                     onChange={handleInputChange}
                     placeholder={formData.updateBookingField === 'startDate' ? 'Start Month' : 'End Month'}
-                    className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-1 text-gray-300">{formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}</label>
+                  <label className="text-sm font-medium mb-1 text-neutral-gray-medium">{formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}</label>
                   <input
                     type="number"
                     name={formData.updateBookingField === 'startDate' ? 'updateBookingStartYear' : 'updateBookingEndYear'}
                     value={formData.updateBookingField === 'startDate' ? formData.updateBookingStartYear : formData.updateBookingEndYear}
                     onChange={handleInputChange}
                     placeholder={formData.updateBookingField === 'startDate' ? 'Start Year' : 'End Year'}
-                    className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                   />
                 </div>
               </div>
             ) : (
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-1 text-gray-300">New Value</label>
+                <label className="text-sm font-medium mb-1 text-neutral-gray-medium">New Value</label>
                 <input
                   type="text"
                   name="updateBookingValue"
                   value={formData.updateBookingValue}
                   onChange={handleInputChange}
                   placeholder="New Value"
-                  className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
                 />
               </div>
             )}
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-lime text-neutral-gray-dark px-4 py-2 rounded-lg hover:bg-lime-dark disabled:opacity-50 transition-colors duration-200"
               onClick={updateBooking}
               disabled={isLoading}
             >
@@ -723,29 +723,29 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'deleteBooking' && (
-        <div className="max-w-lg mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">Delete Booking</h2>
+        <div className="max-w-lg mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">Delete Booking</h2>
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1 text-gray-300">Booking ID</label>
+            <label className="text-sm font-medium mb-1 text-neutral-gray-medium">Booking ID</label>
             <input
               type="text"
               name="deleteBookingID"
               value={formData.deleteBookingID}
               onChange={handleInputChange}
               placeholder="Booking ID"
-              className="bg-slate-800 text-gray-100 border border-slate-600 p-2 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              className="bg-neutral-gray-light text-neutral-gray-dark border border-neutral-gray-medium p-2 rounded-lg text-sm focus:ring-2 focus:ring-lime focus:border-lime"
             />
           </div>
           <div className="flex justify-end space-x-3 mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 disabled:opacity-50 transition-colors duration-200"
               onClick={() => setView('menu')}
               disabled={isLoading}
             >
               Back
             </button>
             <button
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200"
+              className="bg-red-accent text-neutral-white px-4 py-2 rounded-lg hover:bg-red-accent-600 disabled:opacity-50 transition-colors duration-200"
               onClick={handleDeleteBooking}
               disabled={isLoading}
             >
@@ -755,12 +755,12 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'viewCars' && (
-        <div className="max-w-5xl mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">All Cars</h2>
+        <div className="max-w-5xl mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">All Cars</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-teal-600 text-white">
+                <tr className="bg-lime text-neutral-gray-dark">
                   <th className="p-2 text-left font-semibold text-sm">ID</th>
                   <th className="p-2 text-left font-semibold text-sm">Brand</th>
                   <th className="p-2 text-left font-semibold text-sm">Model</th>
@@ -773,16 +773,16 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               </thead>
               <tbody>
                 {cars.map((car, index) => (
-                  <tr key={car.id} className={index % 2 === 0 ? 'bg-slate-800' : 'bg-slate-850'}>
-                    <td className="p-2 text-gray-100 text-sm">{car.id}</td>
-                    <td className="p-2 text-gray-100 text-sm">{car.brand}</td>
-                    <td className="p-2 text-gray-100 text-sm">{car.model}</td>
-                    <td className="p-2 text-gray-100 text-sm">{car.type}</td>
-                    <td className="p-2 text-gray-100 text-sm">{car.year}</td>
-                    <td className="p-2 text-gray-100 text-sm">{car.capacity}</td>
-                    <td className="p-2 text-gray-100 text-sm">${car.rate.toFixed(2)}</td>
+                  <tr key={car.id} className={index % 2 === 0 ? 'bg-neutral-white' : 'bg-neutral-gray-light'}>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.id}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.brand}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.model}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.type}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.year}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{car.capacity}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">${car.rate.toFixed(2)}</td>
                     <td className="p-2">
-                      <span className={`px-2 py-1 rounded-full text-xs ${car.available ? 'bg-teal-600 text-white' : 'bg-red-600 text-white'}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs ${car.available ? 'bg-lime text-neutral-gray-dark' : 'bg-red-accent text-neutral-white'}`}>
                         {car.available ? 'Yes' : 'No'}
                       </span>
                     </td>
@@ -793,7 +793,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           </div>
           <div className="flex justify-end mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 transition-colors duration-200"
               onClick={() => setView('menu')}
             >
               Back
@@ -802,12 +802,12 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'viewCustomers' && (
-        <div className="max-w-5xl mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">All Customers</h2>
+        <div className="max-w-5xl mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">All Customers</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-teal-600 text-white">
+                <tr className="bg-lime text-neutral-gray-dark">
                   <th className="p-2 text-left font-semibold text-sm">ID</th>
                   <th className="p-2 text-left font-semibold text-sm">Name</th>
                   <th className="p-2 text-left font-semibold text-sm">License</th>
@@ -816,11 +816,11 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               </thead>
               <tbody>
                 {customers.map((cust, index) => (
-                  <tr key={cust.id} className={index % 2 === 0 ? 'bg-slate-800' : 'bg-slate-850'}>
-                    <td className="p-2 text-gray-100 text-sm">{cust.id}</td>
-                    <td className="p-2 text-gray-100 text-sm">{cust.name}</td>
-                    <td className="p-2 text-gray-100 text-sm">{cust.license}</td>
-                    <td className="p-2 text-gray-100 text-sm">{cust.contact}</td>
+                  <tr key={cust.id} className={index % 2 === 0 ? 'bg-neutral-white' : 'bg-neutral-gray-light'}>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{cust.id}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{cust.name}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{cust.license}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{cust.contact}</td>
                   </tr>
                 ))}
               </tbody>
@@ -828,7 +828,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           </div>
           <div className="flex justify-end mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 transition-colors duration-200"
               onClick={() => setView('menu')}
             >
               Back
@@ -837,12 +837,12 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
         </div>
       )}
       {view === 'viewBookings' && (
-        <div className="max-w-5xl mx-auto bg-slate-800 p-5 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100 leading-tight">All Bookings</h2>
+        <div className="max-w-5xl mx-auto bg-neutral-gray-light p-5 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-gray-dark leading-tight">All Bookings</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-teal-600 text-white">
+                <tr className="bg-lime text-neutral-gray-dark">
                   <th className="p-2 text-left font-semibold text-sm">Booking ID</th>
                   <th className="p-2 text-left font-semibold text-sm">Car ID</th>
                   <th className="p-2 text-left font-semibold text-sm">Customer ID</th>
@@ -852,12 +852,12 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
               </thead>
               <tbody>
                 {bookings.map((bk, index) => (
-                  <tr key={bk.bookingID} className={index % 2 === 0 ? 'bg-slate-800' : 'bg-slate-850'}>
-                    <td className="p-2 text-gray-100 text-sm">{bk.bookingID}</td>
-                    <td className="p-2 text-gray-100 text-sm">{bk.carID}</td>
-                    <td className="p-2 text-gray-100 text-sm">{bk.customerID}</td>
-                    <td className="p-2 text-gray-100 text-sm">{`${bk.startDate.day}-${bk.startDate.month}-${bk.startDate.year}`}</td>
-                    <td className="p-2 text-gray-100 text-sm">{`${bk.endDate.day}-${bk.endDate.month}-${bk.endDate.year}`}</td>
+                  <tr key={bk.bookingID} className={index % 2 === 0 ? 'bg-neutral-white' : 'bg-neutral-gray-light'}>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{bk.bookingID}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{bk.carID}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{bk.customerID}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{`${bk.startDate.day}-${bk.startDate.month}-${bk.startDate.year}`}</td>
+                    <td className="p-2 text-neutral-gray-dark text-sm">{`${bk.endDate.day}-${bk.endDate.month}-${bk.endDate.year}`}</td>
                   </tr>
                 ))}
               </tbody>
@@ -865,7 +865,7 @@ const AdminDashboard = ({ cars, setCars, customers, setCustomers, bookings, setB
           </div>
           <div className="flex justify-end mt-4">
             <button
-              className="bg-slate-700 text-gray-100 px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors duration-200"
+              className="bg-neutral-gray-medium text-neutral-white px-4 py-2 rounded-lg hover:bg-neutral-gray-600 transition-colors duration-200"
               onClick={() => setView('menu')}
             >
               Back
