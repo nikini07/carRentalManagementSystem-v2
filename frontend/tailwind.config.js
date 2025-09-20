@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'gray-850': '#1F2A44', // Custom shade for alternating table rows
+        'slate-850': '#1E293B', // Custom shade for alternating table rows
       },
     },
   },
