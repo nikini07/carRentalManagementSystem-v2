@@ -51,22 +51,16 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
-      {/* Header */}
       <header className="bg-blue-600 text-white py-4 shadow-md">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold">Car Rental System</h1>
         </div>
       </header>
-
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Booking Form */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-blue-800">Book a Car</h2>
           {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
           {success && <div className="bg-green-100 text-green-700 p-3 rounded mb-4">{success}</div>}
-          
-          {/* Existing Customer Toggle */}
           <div className="mb-4">
             <label className="flex items-center">
               <input
@@ -78,8 +72,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
               <span className="text-gray-700">Existing Customer</span>
             </label>
           </div>
-
-          {/* Customer Details */}
           {isExistingCustomer ? (
             <div className="mb-4">
               <label className="block text-gray-700 mb-1">Customer ID</label>
@@ -125,8 +117,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
               </div>
             </div>
           )}
-
-          {/* Booking Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-gray-700 mb-1">Car ID</label>
@@ -139,8 +129,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
               />
             </div>
           </div>
-
-          {/* Date Inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-gray-700 mb-1">Start Date</label>
@@ -195,8 +183,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
               </div>
             </div>
           </div>
-
-          {/* Book Button */}
           <button
             onClick={handleBookCar}
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition duration-300"
@@ -204,8 +190,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
             Book Car
           </button>
         </div>
-
-        {/* View Available Cars */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <button
             onClick={() => setShowCars(!showCars)}
@@ -246,8 +230,6 @@ const CustomerDashboard = ({ cars, customers, bookings, saveCustomer, saveBookin
             </div>
           )}
         </div>
-
-        {/* View Bookings */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center gap-4 mb-4">
             <button
