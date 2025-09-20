@@ -211,7 +211,7 @@ private:
             cars.push_back(c);
         }
         file.close();
-    }
+        }
 
     void saveCars() {
         ofstream file("cars.txt");
@@ -807,6 +807,7 @@ int main() {
         res.set_header("Access-Control-Allow-Origin", "*");
     });
 
+    cout << "Server listening on localhost:8080" << endl;
     svr.listen("localhost", 8080);
     return 0;
 }
