@@ -28,6 +28,19 @@ const App = () => {
     fetchData();
   }, []);
 
+  const saveCar = async (car) => {
+    try {
+      const response = await axios.post('http://localhost:8080/cars', car);
+      if (response.data.status === 'success') {
+        setCars([...cars, car]);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to save car');
+    }
+  };
+
   const saveCustomer = async (customer) => {
     try {
       const response = await axios.post('http://localhost:8080/customers', customer);
@@ -113,17 +126,17 @@ const App = () => {
   };
 
   return (
-    <div>
-      <div className="bg-gray-200 p-4 flex justify-center gap-4">
+    <div className="bg-gray-900 min-h-screen text-white">
+      <div className="bg-gray-800 p-4 flex justify-center gap-4">
         <button
           onClick={() => setIsAdmin(false)}
-          className={`px-4 py-2 rounded ${!isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+          className={`px-4 py-2 rounded ${!isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'}`}
         >
           Customer Dashboard
         </button>
         <button
           onClick={() => setIsAdmin(true)}
-          className={`px-4 py-2 rounded ${isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+          className={`px-4 py-2 rounded ${isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'}`}
         >
           Admin Dashboard
         </button>
@@ -136,6 +149,12 @@ const App = () => {
           setCars={setCars}
           setCustomers={setCustomers}
           setBookings={setBookings}
+          saveCar={saveCar}
+          saveCustomer={saveCustomer}
+          saveBooking={saveBooking}
+          generateCustomerID={generateCustomerID}
+          generateBookingID={generateBookingID}
+          dateLessThan={dateLessThan}
           deleteCar={deleteCar}
           deleteCustomer={deleteCustomer}
           deleteBooking={deleteBooking}
