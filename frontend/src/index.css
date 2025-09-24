@@ -2,12 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  text-align: center;
+.btn-success {
+  @apply bg-success text-white py-1 px-3 rounded hover:bg-green-600 text-sm transition-colors;
 }
-h1 {
-  color: #333;
+
+.btn-error {
+  @apply bg-error text-white py-1 px-3 rounded hover:bg-red-600 text-sm transition-colors;
 }
